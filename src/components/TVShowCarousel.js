@@ -1,20 +1,22 @@
 import Image from "next/legacy/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { getTrendingMovies } from "@/pages/api/movies";
+import { getTrendingTVShows } from "@/pages/api/tv-shows";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-function MovieCarousel() {
-  const [trendingMovies, setTrendingMovies] = useState([]);
+function TVShowCarousel() {
+  const [trendingTVShows, setTrendingTVShows] = useState([]);
   const router = useRouter();
   const sliderRef = useRef(null);
   const dragStartRef = useRef(null);
   const isDraggingRef = useRef(false);
 
   useEffect(() => {
-    getTrendingMovies().then((movies) => setTrendingMovies(movies));
+    getTrendingTVShows().then((tvShows) => {
+      setTrendingTVShows(tvShows);
+    });
   }, []);
 
   const settings = {
@@ -60,13 +62,13 @@ function MovieCarousel() {
     }
   };
 
-  const handleMouseUp = (movieId, event) => {
+  const handleMouseUp = (tvShowId, event) => {
     const start = dragStartRef.current;
     if (start && !isDraggingRef.current) {
       const end = { x: event.clientX, y: event.clientY };
       const distance = Math.hypot(end.x - start.x, end.y - start.y);
       if (distance < 5) {
-        router.push(`/movies/${movieId}`);
+        router.push(`/tv-shows/${tvShowId}`);
       }
     }
   };
@@ -74,20 +76,22 @@ function MovieCarousel() {
   return (
     <div className="bg-gray-900 py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-6 text-white">Trending Movies</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">
+          Trending TV Shows
+        </h2>
         <Slider ref={sliderRef} {...settings} className="movie-carousel">
-          {trendingMovies.map((movie) => (
-            <div key={movie.id} className="px-2">
+          {trendingTVShows.map((tvShow) => (
+            <div key={tvShow.id} className="px-2">
               <div
                 className=" transform transition-transform duration-300 hover:scale-105"
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
-                onMouseUp={(event) => handleMouseUp(movie.id, event)}
+                onMouseUp={(e) => handleMouseUp(tvShow.id, e)}
               >
                 <div className="relative rounded-lg overflow-hidden shadow-lg">
                   <Image
-                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                    alt={movie.title}
+                    src={`https://image.tmdb.org/t/p/original${tvShow.poster_path}`}
+                    alt={tvShow.name}
                     width={300}
                     height={450}
                     className="w-full h-auto"
@@ -95,7 +99,7 @@ function MovieCarousel() {
                 </div>
               </div>
               <h3 className="mt-2 text-sm font-semibold text-white truncate text-center">
-                {movie.title}
+                {tvShow.name}
               </h3>
             </div>
           ))}
@@ -118,4 +122,4 @@ function MovieCarousel() {
   );
 }
 
-export default MovieCarousel;
+export default TVShowCarousel;

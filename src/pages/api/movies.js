@@ -1,4 +1,4 @@
-const API_KEY = "1ea937ec587065f0e2398088050ff0c4";
+const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const API_URL = "https://api.themoviedb.org/3";
 
 const getPopularMovies = async () => {
@@ -26,5 +26,11 @@ const getTrendingMovies = async () => {
     return [];
   }
 };
+
+console.log("process.env.TMDB_API_KEY:", process.env.NEXT_PUBLIC_TMDB_API_KEY);
+console.log(
+  "fetch URL:",
+  `${API_URL}/trending/movie/week?api_key=${API_KEY}&language=en-US`
+);
 
 export { getTrendingMovies, getPopularMovies };
